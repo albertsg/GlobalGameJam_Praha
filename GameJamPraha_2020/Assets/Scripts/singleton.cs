@@ -13,31 +13,30 @@ public class singleton : MonoBehaviour
     private int score;
     private GameObject canvas;
     private Text wordPrefab;
-    private int aux; //DELETE
+
+
     // Start is called before the first frame update
     void Start()
     {
      score = 0;   
      canvas = GameObject.Find("Canvas");
-     aux = 0;
+
+        InvokeRepeating("CreateWord", 1.0f, 1.0f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
     }
 
     // Update is called once per frame
     void Update()
     {
-        while(aux == 0){//DELETE
-            CreateWord();
-            aux++;
-        }
+        
     }
 
 
-    private void CreateWord(){
+    private void CreateWord(){ //Generates new words into the Canvas at a random position (but same Y)
 
         wordPrefab = wordAsset.GetComponent<Text>();
-        wordPrefab.text = words[0]; // To make random!
+        wordPrefab.text = words[Random.Range(0, words.Length)]; // To make random!
         var rect = canvas.transform as RectTransform;
-        Vector2 pos = new Vector2(rect.rect.width/2, rect.rect.height + 20);
+        Vector2 pos = new Vector2(Random.Range(50, rect.rect.width - 50), rect.rect.height + 200);//50 is a treshold
         GameObject init_word = Instantiate(wordAsset, pos, Quaternion.identity,canvas.transform);
 
     }
