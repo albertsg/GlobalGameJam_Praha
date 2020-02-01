@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6568050459382179182}
   - component: {fileID: 8229201660027439930}
   - component: {fileID: 652239593499850809}
+  - component: {fileID: -5154389963928449574}
   m_Layer: 5
   m_Name: WordFall
   m_TagString: Untagged
@@ -153,3 +154,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 150, y: 30}
   m_EdgeRadius: 0
+--- !u!114 &-5154389963928449574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6827604123046503511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc98346d981584675be746ba2a5f44dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Block: {fileID: 1309546217431225977, guid: 80a10ae8e1c344167a2108b9bf5849a0, type: 3}
