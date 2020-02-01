@@ -11,6 +11,7 @@ public class singleton : MonoBehaviour
     public string[] words;
     //Private variables
     private int score;
+    public Text playerScore;
     private GameObject canvas;
     public float canvasHeight;
     private Text wordPrefab;
@@ -23,7 +24,6 @@ public class singleton : MonoBehaviour
     public char[] myWord; // The current word selected
     public bool myWord_created;
     public int wsel; //Position of the word selected in the array of words
-
 
     // Start is called before the first frame update
     void Start()
@@ -93,6 +93,8 @@ Bugs:
                 { //If words has been completed, delete
                     DeleteWord(retstring);
                     //w_spawned[wsel] = -1;
+                    //And then we add points to our score
+                    AddScore();
                 }
                 else
                 { //Otherwise update word in gameobject
@@ -236,6 +238,11 @@ Bugs:
 
     private bool AllWordsSpawned(){
         return wspawned == words.Length;
+    }
+
+    private void AddScore(){
+        score += 100;
+        playerScore.text = score.ToString();
     }
 
 }

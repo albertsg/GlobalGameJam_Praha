@@ -21,8 +21,6 @@ public class word2block : MonoBehaviour
     {
         if (this.transform.position.y > infoWorld.canvasHeight && this.getCollision){
             infoWorld.gameOver = true;
-            Debug.Log(infoWorld.canvasHeight);
-            Debug.Log(this.transform.position.y);
         }
     }
 
@@ -34,7 +32,8 @@ public class word2block : MonoBehaviour
     IEnumerator WordToBlock(){
         yield return new WaitForSeconds(5);
 
-        this.gameObject.SetActive(false);
+        // this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
         // Block.Rect = this.gameObject.Rect;
         Instantiate(Block, this.transform.position, this.transform.rotation, GameObject.Find("Canvas").transform);
     }
