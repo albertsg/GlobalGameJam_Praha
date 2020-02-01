@@ -44,7 +44,7 @@ public class singleton : MonoBehaviour
             size_words[i] = words[i].Length; //Set size of words in the array. Once it gets to 0 it means it's deleted
         }
 
-        InvokeRepeating("CreateWord", 1.0f, 1.0f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+        InvokeRepeating("CreateWord", 1.0f, 1.2f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
         gameOver = false;
     }
 
@@ -184,19 +184,22 @@ Bugs:
         }
     }
 
-    private void DeleteWord(string findstring){ //Delete the gameobject
+    public void DeleteWord(string findstring){ //Delete the gameobject
         Text go_text;
         GameObject[] respawns = GameObject.FindGameObjectsWithTag("WordPrefab"); //Gets array of words gameobject in the scene
-
+        Debug.Log("Enter DeleteWord function");
+        Debug.Log(respawns.Length);
         foreach (GameObject respawn in respawns)
         {
             go_text = respawn.GetComponent<Text>();
+            Debug.Log("Word received: " + findstring + " AND word to compare: " + go_text.text);
             if (go_text.text == findstring)
             { //In order to find the gameobject we compare the string before deleting a word with the current string of the gameobject
+            Debug.Log("Word found and proceding to be destroyed");
                 Destroy(respawn); //Remove the gameobject
                 selected = false; 
                 //words_typed[wsel] = false;
-                /*Test*/
+                Debug.Log("wsel --> "+wsel);
                 char[] del = new char[words[wsel].ToCharArray().Length];
                 del = words[wsel].ToCharArray();
                 for (int i = 0; i < del.Length; i++)
@@ -205,7 +208,6 @@ Bugs:
                 }
                 string auxs = new string(del); //Convert to string
                 words[wsel] = auxs;
-                /*************/
                 break;//We break the loop once found to avoid more unnecesary iterations
             }
         }
