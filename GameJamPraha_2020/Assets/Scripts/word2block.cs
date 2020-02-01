@@ -18,24 +18,25 @@ public class word2block : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (this.transform.position.y > infoWorld.canvasHeight && this.getCollision){
-            infoWorld.gameOver = true;
-            Debug.Log(infoWorld.canvasHeight);
-            Debug.Log(this.transform.position.y);
+    {   
+        if (this.transform.position.y > infoWorld.canvasHeight && this.getCollision && this.GetComponent<Rigidbody2D>().velocity.y >= 0){ //GameOver condition
+            infoWorld.gameOver = true; //Updates gameOver in singleton
         }
     }
 
-    void OnCollisionEnter2D(Collision2D coll){
+    void OnCollisionEnter2D(Collision2D coll){ //On Collision
         this.getCollision = true;
         StartCoroutine(WordToBlock());
     }
 
-    IEnumerator WordToBlock(){
+    IEnumerator WordToBlock(){ //Creates a block in the word position
         yield return new WaitForSeconds(5);
 
-        this.gameObject.SetActive(false);
-        // Block.Rect = this.gameObject.Rect;
+        //this.gameObject.SetActive(false);
+        this.gameObject.transform.localScale = new Vector3(0, 0, 0); //Hiding the element by scaling it to 0 makes it available to find
         Instantiate(Block, this.transform.position, this.transform.rotation, GameObject.Find("Canvas").transform);
+        Debug.Log("String sent --> "+this.GetComponent<Text>().text);
+        infoWorld.GetComponent<singleton>().DeleteWord(this.GetComponent<Text>().text);
+        //Destroy(gameObject);
     }
 }
