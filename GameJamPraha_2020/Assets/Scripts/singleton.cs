@@ -12,21 +12,26 @@ public class singleton : MonoBehaviour
     //Private variables
     private int score;
     private GameObject canvas;
+    public float canvasHeight;
     private Text wordPrefab;
-
+    public bool gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
-     score = 0;   
-     canvas = GameObject.Find("Canvas");
-
+        score = 0;   
+        canvas = GameObject.Find("Canvas");
+        canvasHeight = canvas.GetComponent<RectTransform>().rect.height;
         InvokeRepeating("CreateWord", 1.0f, 1.0f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+        gameOver = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameOver){
+            Debug.Log("GAME OVEEEER");
+        }
         
     }
 
