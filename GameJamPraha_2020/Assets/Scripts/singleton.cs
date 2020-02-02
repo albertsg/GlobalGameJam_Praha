@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class singleton : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class singleton : MonoBehaviour
     //Private variables
     private int score;
     public Text playerScore;
-    private GameObject canvas;
+    public GameObject canvas;
     public menu menu;
     public float canvasHeight;
     private Text wordPrefab;
@@ -52,7 +53,7 @@ public class singleton : MonoBehaviour
             InvokeRepeating("CreateWord", 0.1f, 1.2f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
         }
         if (menu.level1_hard){
-            InvokeRepeating("CreateWord", 0.1f, 0.3f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+            InvokeRepeating("CreateWord", 0.1f, 0.8f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
         }
         gameOver = false;
 
@@ -65,7 +66,6 @@ public class singleton : MonoBehaviour
     void Update()
     {
         if (gameOver){
-            Debug.Log("GAME OVER!");
             GameOverToCenter();
             if(score > highScore){
                 PlayerPrefs.SetInt(highScoreKey, score);
@@ -75,7 +75,7 @@ public class singleton : MonoBehaviour
             }
             if (Input.GetKeyDown("space"))
             {
-                print("space key was pressed");
+                SceneManager.LoadScene("Menu", LoadSceneMode.Single);
             }
         }
         
@@ -222,7 +222,6 @@ Bugs:
                     //We need to find the position of the word since it's not selected anymore
                     int loc_pos = FindPositionInList(findstring);
                     if(loc_pos > -1){ //POZOR this can cause ISSUES when -1! What should it remove?-------------------------------
-                        Debug.Log("Word can be found in position: " + loc_pos);
                         char[] del = new char[words[loc_pos].ToCharArray().Length];
                         del = words[loc_pos].ToCharArray();
                         for (int i = 0; i < del.Length; i++)

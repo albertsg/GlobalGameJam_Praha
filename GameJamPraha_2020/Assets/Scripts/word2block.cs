@@ -18,7 +18,7 @@ public class word2block : MonoBehaviour
         GameObject g = GameObject.FindGameObjectWithTag("MainCamera");
         infoWorld = g.GetComponent<singleton>();
         audio = GetComponent<AudioSource>();
-        pop_transform = infoWorld.GetComponent<AudioSource>();
+        pop_transform = infoWorld.canvas.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -37,15 +37,6 @@ public class word2block : MonoBehaviour
             firstcol = true;
         }
     }
-
-    // void OnTriggerEnter(Collider col)
-    // {
-    //     Debug.Log("HOLAAAA");
-    //     if(col.GetComponent<Collider>().tag == "WordPrefab")
-    //     {
-    //         audio.Play();
-    //     }
-    // }
 
     IEnumerator WordToBlock(){ //Creates a block in the word position
         yield return new WaitForSeconds(5);
