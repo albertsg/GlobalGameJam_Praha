@@ -57,8 +57,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ba0b42be4920d4f1b9cdf7ca12430b70, type: 2}
-  m_Color: {r: 0.972549, g: 0.12549019, b: 0.15614407, a: 1}
+  m_Material: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  m_Color: {r: 0.972549, g: 0.3449303, b: 0.12549019, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 8229201660027439930}
   - component: {fileID: 652239593499850809}
   - component: {fileID: -5154389963928449574}
-  - component: {fileID: 8833934390769641519}
+  - component: {fileID: -8865196531529319268}
   m_Layer: 5
   m_Name: WordFall
   m_TagString: WordPrefab
@@ -154,7 +154,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: windows
+  m_Text: mac
 --- !u!50 &8229201660027439930
 Rigidbody2D:
   serializedVersion: 4
@@ -217,7 +217,7 @@ MonoBehaviour:
   Block: {fileID: 1309546217431225977, guid: 80a10ae8e1c344167a2108b9bf5849a0, type: 3}
   infoWorld: {fileID: 0}
   getCollision: 0
---- !u!82 &8833934390769641519
+--- !u!82 &-8865196531529319268
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -227,7 +227,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5e373b5330d5343538665768b4e194d5, type: 3}
+  m_audioClip: {fileID: 8300000, guid: b8ee21285e31345db9f2088c08cb1c6a, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
