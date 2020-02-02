@@ -13,6 +13,7 @@ public class singleton : MonoBehaviour
     private int score;
     public Text playerScore;
     private GameObject canvas;
+    public menu menu;
     public float canvasHeight;
     private Text wordPrefab;
     public bool gameOver;
@@ -37,14 +38,19 @@ public class singleton : MonoBehaviour
         words_typed = new bool[words.Length]; //Create an array of bool to identify if a word has been spawned or not
         w_spawned = new int[words.Length]; //Create an array of int to identify the order of the words spawned
         size_words = new int[words.Length];
+        
         for (int i = 0; i < words_typed.Length; i++)
         {
             words_typed[i] = false; //Set all spawned words to false
             w_spawned[i] = -1; // -1 will be our "null" or "empty"
             size_words[i] = words[i].Length; //Set size of words in the array. Once it gets to 0 it means it's deleted
         }
-
-        InvokeRepeating("CreateWord", 1.0f, 1.2f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+        if (menu.level1_medium){
+            InvokeRepeating("CreateWord", 0.1f, 1.2f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+        }
+        if (menu.level1_hard){
+            InvokeRepeating("CreateWord", 0.1f, 0.3f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
+        }
         gameOver = false;
     }
 

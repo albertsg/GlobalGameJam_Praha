@@ -9,11 +9,14 @@ public class word2block : MonoBehaviour
     public GameObject Block;
     public singleton infoWorld;
     public bool getCollision;
+    private AudioSource audio;
+    private bool firstcol = false;
     // Start is called before the first frame update
     void Start()
     {
         GameObject g = GameObject.FindGameObjectWithTag("MainCamera");
         infoWorld = g.GetComponent<singleton>();
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -27,7 +30,20 @@ public class word2block : MonoBehaviour
     void OnCollisionEnter2D(Collision2D coll){ //On Collision
         this.getCollision = true;
         StartCoroutine(WordToBlock());
+        if(!firstcol && (coll.gameObject.tag == "WordPrefab" || coll.gameObject.tag == "WordBlock" || coll.gameObject.tag == "Ground")){
+            audio.Play();  
+            firstcol = true;
+        }
     }
+
+    // void OnTriggerEnter(Collider col)
+    // {
+    //     Debug.Log("HOLAAAA");
+    //     if(col.GetComponent<Collider>().tag == "WordPrefab")
+    //     {
+    //         audio.Play();
+    //     }
+    // }
 
     IEnumerator WordToBlock(){ //Creates a block in the word position
         yield return new WaitForSeconds(5);
