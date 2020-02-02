@@ -7,6 +7,7 @@ TagManager:
   - WordPrefab
   - WordBlock
   - Ground
+  - GameOver
   layers:
   - Default
   - TransparentFX

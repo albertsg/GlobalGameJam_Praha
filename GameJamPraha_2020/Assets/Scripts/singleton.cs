@@ -25,6 +25,9 @@ public class singleton : MonoBehaviour
     public char[] myWord; // The current word selected
     public bool myWord_created;
     public int wsel; //Position of the word selected in the array of words
+    public int highScore; //We get the highscore from PlayerPrefs
+    private string highScoreKey = "HighScore";
+    private bool newHighScore = false;
 
     // Start is called before the first frame update
     void Start()
@@ -52,13 +55,28 @@ public class singleton : MonoBehaviour
             InvokeRepeating("CreateWord", 0.1f, 0.3f); //To create a new word after X seconds (function, initial delay on start, time between invokes)
         }
         gameOver = false;
+
+        highScore = PlayerPrefs.GetInt(highScoreKey, 0);
+        GameObject ghs = GameObject.Find("Game_highscore");
+        ghs.GetComponent<Text>().text = highScore.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (gameOver){
-            Debug.Log("GAME OVEEEER");
+            Debug.Log("GAME OVER!");
+            GameOverToCenter();
+            if(score > highScore){
+                PlayerPrefs.SetInt(highScoreKey, score);
+                PlayerPrefs.Save();
+                highScore = score;
+                newHighScore = true;
+            }
+            if (Input.GetKeyDown("space"))
+            {
+                print("space key was pressed");
+            }
         }
         
         listenKeys();
@@ -97,10 +115,12 @@ Bugs:
                 size_words[wsel]--; //Update the size of the word
                 if (size_words[wsel] <= 0)
                 { //If words has been completed, delete
-                    DeleteWord(retstring);
+                    DeleteWord(retstring, false);
                     //w_spawned[wsel] = -1;
                     //And then we add points to our score
-                    AddScore();
+                    if(!gameOver){
+                        AddScore();
+                    }
                 }
                 else
                 { //Otherwise update word in gameobject
@@ -134,9 +154,7 @@ Bugs:
                         found = true;
                         selected = true;
                         wsel = w_spawned[i];
-                        /*Test*/
                         myWord = words[wsel].ToCharArray();
-                        /******/
                         retstring = words[w_spawned[i]]; //Will return the string before the update so we can find it in the gameobjects
                         aux = new char[myWord.Length];
                         for (int x = 0; x < myWord.Length - 1; x++) //Copy all the letters except the first one into an aux char array
@@ -148,8 +166,10 @@ Bugs:
                         size_words[w_spawned[i]]--; //Update the size of the word
                         if (size_words[w_spawned[i]] <= 0)
                         { //If words has been completed, delete
-                            DeleteWord(retstring);
-                            w_spawned[w_spawned[i]] = -1;
+                            DeleteWord(retstring, false);
+                            if(!gameOver){
+                                AddScore();
+                            }   
                         }
                         else
                         { //Otherwise update word in gameobject
@@ -169,7 +189,6 @@ Bugs:
     }
 
     private void UpdateGameObjectWithWord(string findstring, int pos){//This will update the word in the gameobject
-        // string saux = words[wsel];
         string saux = words[pos];
         Text go_text;
         GameObject[] respawns = GameObject.FindGameObjectsWithTag("WordPrefab"); //Gets array of words gameobject in the scene
@@ -190,56 +209,74 @@ Bugs:
         }
     }
 
-    public void DeleteWord(string findstring){ //Delete the gameobject
+    public void DeleteWord(string findstring, bool fromObj){ //Delete the gameobject
         Text go_text;
         GameObject[] respawns = GameObject.FindGameObjectsWithTag("WordPrefab"); //Gets array of words gameobject in the scene
-        Debug.Log("Enter DeleteWord function");
-        Debug.Log(respawns.Length);
         foreach (GameObject respawn in respawns)
         {
             go_text = respawn.GetComponent<Text>();
-            Debug.Log("Word received: " + findstring + " AND word to compare: " + go_text.text);
             if (go_text.text == findstring)
             { //In order to find the gameobject we compare the string before deleting a word with the current string of the gameobject
-            Debug.Log("Word found and proceding to be destroyed");
-                Destroy(respawn); //Remove the gameobject
                 selected = false; 
-                //words_typed[wsel] = false;
-                Debug.Log("wsel --> "+wsel);
-                char[] del = new char[words[wsel].ToCharArray().Length];
-                del = words[wsel].ToCharArray();
-                for (int i = 0; i < del.Length; i++)
+                if(fromObj){
+                    //We need to find the position of the word since it's not selected anymore
+                    int loc_pos = FindPositionInList(findstring);
+                    if(loc_pos > -1){ //POZOR this can cause ISSUES when -1! What should it remove?-------------------------------
+                        Debug.Log("Word can be found in position: " + loc_pos);
+                        char[] del = new char[words[loc_pos].ToCharArray().Length];
+                        del = words[loc_pos].ToCharArray();
+                        for (int i = 0; i < del.Length; i++)
+                        {
+                            del[i] = char.MinValue;
+                        }
+                        string auxs = new string(del); //Convert to string
+                        words[loc_pos] = auxs;
+                        size_words[loc_pos] = 0;
+                        Destroy(respawn); //Remove the gameobject
+                        break;//We break the loop once found to avoid more unnecesary iterations
+                    }
+                }else //It has been deleted by the user
                 {
-                    del[i] = char.MinValue;
+                    char[] del = new char[words[wsel].ToCharArray().Length];
+                    del = words[wsel].ToCharArray();
+                    for (int i = 0; i < del.Length; i++)
+                    {
+                        del[i] = char.MinValue;
+                    }
+                    string auxs = new string(del); //Convert to string
+                    words[wsel] = auxs;
+                    size_words[wsel] = 0; 
+                    Destroy(respawn); //Remove the gameobject
+                    break;//We break the loop once found to avoid more unnecesary iterations
                 }
-                string auxs = new string(del); //Convert to string
-                words[wsel] = auxs;
-                break;//We break the loop once found to avoid more unnecesary iterations
             }
         }
     }
 
     private void CreateWord(){ //Generates new words into the Canvas at a random position (but same Y)
-        if(!AllWordsSpawned()){//Checks if all words have been spawned
-            wordPrefab = wordAsset.GetComponent<Text>();
-            int rand;
-            do
-            {
-                rand = Random.Range(0, words.Length);
-            } while (words_typed[rand]);
-            wordPrefab.text = words[rand]; // To make random!
-            var rect = canvas.transform as RectTransform;
-            // Vector2 pos = new Vector2(Random.Range(50, rect.rect.width - 50), rect.rect.height + 200);//50 is a treshold
-            Vector2 pos = new Vector2(Random.Range(300, rect.rect.width - 300), rect.rect.height + 200);
-            GameObject init_word = Instantiate(wordAsset, pos, Quaternion.identity, canvas.transform);
-            words_typed[rand] = true;
-            w_spawned[wspawned] = rand; //This will indicate what word (rand) has been spawned and in what order (w_spawned[order])
-            if(!myWord_created){ //Only gets here once, when the first object/word is created
-                myWord = words[rand].ToCharArray();
-                myWord_created = true;
-                wsel = rand;
+        if(!gameOver){
+            if (!AllWordsSpawned())
+            {//Checks if all words have been spawned
+                wordPrefab = wordAsset.GetComponent<Text>();
+                int rand;
+                do
+                {
+                    rand = Random.Range(0, words.Length);
+                } while (words_typed[rand]);
+                wordPrefab.text = words[rand]; // To make random!
+                var rect = canvas.transform as RectTransform;
+                Vector2 pos = new Vector2(Random.Range(300, rect.rect.width - 300), rect.rect.height + 200);
+                GameObject init_word = Instantiate(wordAsset, pos, Quaternion.identity, canvas.transform);
+                words_typed[rand] = true;
+                w_spawned[wspawned] = rand; //This will indicate what word (rand) has been spawned and in what order (w_spawned[order])
+                if (!myWord_created)
+                { //Only gets here once, when the first object/word is created
+                    myWord = words[rand].ToCharArray();
+                    myWord_created = true;
+                    wsel = rand;
+                }
+                wspawned++;//Increase the number of spawned words
             }
-            wspawned++;//Increase the number of spawned words
         }
 
     }
@@ -252,5 +289,67 @@ Bugs:
         score += 100;
         playerScore.text = score.ToString();
     }
+
+    private void UpdateBeforeChange(){
+        words[wsel] = myWord.ToString();
+        size_words[wsel] = myWord.Length;
+    }
+
+    private int FindPositionInList(string palabra){
+        int iaux = 0;
+        int iret = -1;
+        foreach (string item in words)
+        {
+            if(palabra == item){
+                iret = iaux;
+            }else{
+                iaux++;
+            }
+        }
+        return iret;
+    }
+
+    private void GameOverScreen(){
+        Time.timeScale = 0; //Stops everything
+        CancelInvoke(); //Cancel invoke
+        GameOverToCenter();
+    }
+
+
+   
+
+    private void GameOverToCenter(){
+        GameObject go1 = GameObject.Find("GameOver");
+        GameObject go2 = GameObject.Find("GameOverBack");
+        GameObject hs1 = GameObject.Find("HishScore");
+        GameObject hs2 = GameObject.Find("HighScore_score");
+        GameObject ret = GameObject.Find("Return");
+
+
+        RectTransform assign_text_2RT = go2.GetComponent<RectTransform>();
+        assign_text_2RT.anchoredPosition = new Vector3(12f, -3f, 0f);
+        go2.transform.SetAsLastSibling();
+
+        RectTransform assign_text_1RT = go1.GetComponent<RectTransform>();
+        assign_text_1RT.anchoredPosition = new Vector3(6f, 0f, 0f);
+        go1.transform.SetAsLastSibling();
+
+        if(newHighScore){
+            RectTransform assign_text_3RT = hs1.GetComponent<RectTransform>();
+            assign_text_3RT.anchoredPosition = new Vector3(0f, -114f, 0f);
+            hs1.transform.SetAsLastSibling();
+
+            hs2.GetComponent<Text>().text = highScore.ToString();
+            RectTransform assign_text_4RT = hs2.GetComponent<RectTransform>();
+            assign_text_4RT.anchoredPosition = new Vector3(0f, -171f, 0f);
+            hs2.transform.SetAsLastSibling();
+        }
+
+        RectTransform assign_text_5RT = ret.GetComponent<RectTransform>();
+        assign_text_5RT.anchoredPosition = new Vector3(0f, -286f, 0f);
+        ret.transform.SetAsLastSibling();
+
+    }
+
 
 }
